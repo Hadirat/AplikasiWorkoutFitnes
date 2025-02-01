@@ -14,7 +14,7 @@ export default function StartScreen() {
       >
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push('/tingkatan')} // Navigasi ke halaman berikutnya
+          onPress={() => router.push('/latihan')}
         >
           <Text style={styles.buttonText}>MULAI</Text>
         </TouchableOpacity>

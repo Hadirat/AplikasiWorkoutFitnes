@@ -1,134 +1,84 @@
-import React from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, Image, FlatList, TouchableOpacity, Alert, ScrollView } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import styles from "./style";
 
-export default function FullBodyWorkout() {
+const latihan = [
+  { id: "1", name: "Jogging di tempat", reps: "1 menit x 3 set", image: require("@/assets/hari-2/joging.png") },
+  { id: "2", name: "Bridge Pose", reps: "3 set x 12 repetisi", image: require("@/assets/hari-2/Bridgepose.png") },
+  { id: "3", name: "Superman Hold", reps: "20 detik x 3 set", image: require("@/assets/hari-2/superman.png") },
+  { id: "4", name: "Lunges", reps: "3 set x 8 repetisi", image: require("@/assets/hari-2/lunges.png") },
+  { id: "5", name: "Mountain Climber", reps: "30 detik x 3 set", image: require("@/assets/hari-2/mountain-climber.png") },
+];
+  
+export default function Hari1() {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
 
-  const workouts = [
-    { id: 1, name: 'Push', time: '00.20', image: require('@/assets/top-layar1.jpg') },
-    { id: 2, name: 'Sit-Up', time: '00.20', image: require('@/assets/top-layar1.jpg') },
-    { id: 3, name: 'Squats', time: '00.20', image: require('@/assets/top-layar1.jpg') },
-    { id: 4, name: 'Plank', time: '00.20', image: require('@/assets/top-layar1.jpg') },
-    { id: 5, name: 'Jumping jacks', time: '00.20', image: require('@/assets/top-layar1.jpg') },
-    { id: 6, name: 'Wall push-up', time: '00.20', image: require('@/assets/top-layar1.jpg') },
-  ];
+  const saveProgress = async () => {
+    try {
+      const progress = await AsyncStorage.getItem("completedDays");
+      const parsedProgress = progress ? JSON.parse(progress) : [];
+      if (!parsedProgress.includes("hari-2")) {
+        parsedProgress.push("hari-2");
+        await AsyncStorage.setItem("completedDays", JSON.stringify(parsedProgress));
+      }
+      await AsyncStorage.setItem("hari-2", JSON.stringify(latihan));
+    } catch (error) {
+      console.error("Error saving progress: ", error);
+    }
+  };
+
+  const handleStart = () => {
+    if (currentIndex < latihan.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      Alert.alert("Latihan Selesai", "Anda telah menyelesaikan latihan hari 2!", [
+        {
+          text: "OK",
+          onPress: () => {
+            saveProgress();
+          },
+        },
+      ]);
+    }
+  };
+
+  const renderExercise = ({ item, index }) => (
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={[styles.workoutItem, currentIndex === index && styles.activeExercise]}>
+        <Image source={item.image} style={styles.workoutImage} />
+        <View>
+          <Text style={styles.workoutName}>{item.name}</Text>
+          <Text style={styles.workoutReps}>{item.reps}</Text>
+        </View>
+      </View>
+    </ScrollView>
+  );
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.backButtonText}>{'<'}</Text>
-        </TouchableOpacity>
-        <Image
-          source={require('@/assets/top-layar1.jpg')} // Ganti dengan gambar header yang sesuai
-          style={styles.headerImage}
-        />
-        <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>11 Latihan</Text>
-          <Text style={styles.infoText}>|</Text>
-          <Text style={styles.infoText}>7 Menit</Text>
-        </View>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>{"←"}</Text>
+      </TouchableOpacity>
+      <Image source={require("@/assets/top-layar2.jpg")} style={styles.layar1} />
+      <View style={styles.statsContainer}>
+        <Text style={styles.statText}>5 Latihan</Text>
+        <Text style={styles.statText}>10 Menit</Text>
       </View>
-
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.sectionTitle}>Latihan</Text>
-        {workouts.map((workout) => (
-          <View key={workout.id} style={styles.workoutItem}>
-            <Image source={workout.image} style={styles.workoutImage} />
-            <View style={styles.workoutTextContainer}>
-              <Text style={styles.workoutName}>{workout.name}</Text>
-              <Text style={styles.workoutTime}>{workout.time}</Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+      <FlatList
+        data={latihan}
+        renderItem={renderExercise}
+        keyExtractor={(item) => item.id}
+        style={styles.workoutTextContainer}
+      />
+      <TouchableOpacity style={styles.startButton} onPress={handleStart}>
+        <Text style={styles.startButtonText}>
+          {currentIndex < latihan.length - 1 ? "Latihan Berikutnya" : "Selesai"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  headerContainer: {
-    position: 'relative',
-    height: 200,
-    backgroundColor: '#000',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 20,
-    padding: 10,
-  },
-  backButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  headerImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  infoContainer: {
-    position: 'absolute',
-    bottom: 10,
-    left: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  infoText: {
-    fontSize: 16,
-    color: '#fff',
-    marginHorizontal: 5,
-    fontWeight: 'bold',
-  },
-  scrollContainer: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  workoutItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#f9f9f9',
-    elevation: 3,
-  },
-  workoutImage: {
-    width: 50,
-    height: 50,
-    marginRight: 15,
-  },
-  workoutTextContainer: {
-    flex: 1,
-  },
-  workoutName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  workoutTime: {
-    fontSize: 14,
-    color: '#555',
-  },
-});

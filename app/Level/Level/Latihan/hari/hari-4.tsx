@@ -5,15 +5,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./style";
 
 const latihan = [
-    { id: "1", name: "Push-Up", reps: "3 set x 8 repetisi", image: require("@/assets/hari-1/push-up.png") },
-    { id: "2", name: "Sit-Up", reps: "3 set x 10 repetisi", image: require("@/assets/hari-1/sit-up.png") },
-    { id: "3", name: "Squats", reps: "3 set x 10 repetisi", image: require("@/assets/hari-1/squat.png") },
-    { id: "4", name: "Plank", reps: "15 detik, 3 kali", image: require("@/assets/hari-1/plank.png") },
-    { id: "5", name: "Jumping Jacks", reps: "30 detik x 3 set", image: require("@/assets/hari-1/jumping-jacks.png") },
-    { id: "6", name: "Wall Push-Up", reps: "3 set x 12 repetisi", image: require("@/assets/hari-1/wall-push.png") },
-  ];
+  { id: "1", name: "Child’s Pose", reps: "", image: require("@/assets/hari-4/childspose.png") },
+  { id: "2", name: "Cat-Cow", reps: "", image: require("@/assets/hari-4/cat-cow.png") },
+  { id: "3", name: "Downward Dog", reps: "", image: require("@/assets/hari-4/downward.png") },
+];
   
-
 export default function Hari1() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const router = useRouter();
@@ -22,11 +18,11 @@ export default function Hari1() {
     try {
       const progress = await AsyncStorage.getItem("completedDays");
       const parsedProgress = progress ? JSON.parse(progress) : [];
-      if (!parsedProgress.includes("hari-1")) {
-        parsedProgress.push("hari-1");
+      if (!parsedProgress.includes("hari-4")) {
+        parsedProgress.push("hari-4");
         await AsyncStorage.setItem("completedDays", JSON.stringify(parsedProgress));
       }
-      await AsyncStorage.setItem("hari-1", JSON.stringify(latihan));
+      await AsyncStorage.setItem("hari-4", JSON.stringify(latihan));
     } catch (error) {
       console.error("Error saving progress: ", error);
     }
@@ -36,7 +32,7 @@ export default function Hari1() {
     if (currentIndex < latihan.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      Alert.alert("Latihan Selesai", "Anda telah menyelesaikan latihan hari 1!", [
+      Alert.alert("Latihan Selesai", "Anda telah menyelesaikan latihan hari 4!", [
         {
           text: "OK",
           onPress: () => {
@@ -66,8 +62,8 @@ export default function Hari1() {
       </TouchableOpacity>
       <Image source={require("@/assets/top-layar2.jpg")} style={styles.layar1} />
       <View style={styles.statsContainer}>
-        <Text style={styles.statText}>6 Latihan</Text>
-        <Text style={styles.statText}>12 Menit</Text>
+        <Text style={styles.statText}>3 Latihan</Text>
+        <Text style={styles.statText}>10 Menit</Text>
       </View>
       <FlatList
         data={latihan}
@@ -83,3 +79,4 @@ export default function Hari1() {
     </View>
   );
 }
+

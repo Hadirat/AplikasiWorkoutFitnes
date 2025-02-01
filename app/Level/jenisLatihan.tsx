@@ -12,6 +12,14 @@ export default function jenisLatihan() {
   
   return (
     <View style={styles.container}>
+       <View>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>{'←'}</Text>
+        </TouchableOpacity>
+        </View>
         <View>
             <Image style={styles.layar1}
             source={require('@/assets/top-layar1.jpg')}></Image>
@@ -96,5 +104,18 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 18,
     fontWeight: '500',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 5,
+    left: 5,
+    zIndex: 1,
+    borderRadius: 50,
+    padding: 5,
+  },
+  backButtonText: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color:'white'
   },
 });
